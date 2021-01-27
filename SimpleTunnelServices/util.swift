@@ -10,7 +10,7 @@ import Foundation
 import Darwin
 
 /// SimpleTunnel errors
-public enum SimpleTunnelError: ErrorType {
+public enum SimpleTunnelError: Error {
     case BadConfiguration
     case BadConnection
 	case InternalError
@@ -37,12 +37,12 @@ class SavedData {
 	}
 
 	/// Write as much of the data in the list as possible to a stream
-	func writeToStream(stream: NSOutputStream) -> Bool {
+	func writeToStream(stream: OutputStream) -> Bool {
 		var result = true
 		var stopIndex: Int?
 
-		for (chainIndex, record) in chain.enumerate() {
-			let written = writeData(record.data, toStream: stream, startingAtOffset:record.offset)
+		for (chainIndex, record) in chain.enumerated() {
+			let written = writeData(data: record.data, toStream: stream, startingAtOffset:record.offset)
 			if written < 0 {
 				result = false
 				break
@@ -58,11 +58,11 @@ class SavedData {
 		if let removeEnd = stopIndex {
 			// We did not write all of the data, remove what was written.
 			if removeEnd > 0 {
-				chain.removeRange(Range(start: 0, end: removeEnd))
+				//chain.removeRange(Range(start: 0, end: removeEnd))
 			}
 		} else {
 			// All of the data was written.
-			chain.removeAll(keepCapacity: false)
+			chain.removeAll(keepingCapacity: false)
 		}
 
 		return result
@@ -70,7 +70,7 @@ class SavedData {
 
 	/// Remove all data from the list.
 	func clear() {
-		chain.removeAll(keepCapacity: false)
+		chain.removeAll(keepingCapacity: false)
 	}
 }
 
@@ -84,14 +84,15 @@ class SocketAddress6 {
 
 	/// The IPv6 address as a string.
 	var stringValue: String? {
-		return withUnsafePointer(&sin6) { saToString(UnsafePointer<sockaddr>($0)) }
-	}
+		//return withUnsafePointer(to: &sin6) { saToString(sa: UnsafePointer<sockaddr>($0)) }
+        return nil //FIXME
+    }
 
 	// MARK: Initializers
 
 	init() {
 		sin6 = sockaddr_in6()
-		sin6.sin6_len = __uint8_t(sizeof(sockaddr_in6))
+		sin6.sin6_len = __uint8_t(MemoryLayout<sockaddr_in6>.size)
 		sin6.sin6_family = sa_family_t(AF_INET6)
 		sin6.sin6_port = in_port_t(0)
 		sin6.sin6_addr = in6addr_any
@@ -125,13 +126,14 @@ class SocketAddress {
 
 	/// The IPv4 address in string form.
 	var stringValue: String? {
-		return withUnsafePointer(&sin) { saToString(UnsafePointer<sockaddr>($0)) }
-	}
+		//return withUnsafePointer(to: &sin) { saToString(sa: UnsafePointer<sockaddr>($0)) }
+        return nil //FIXME
+    }
 
 	// MARK: Initializers
 
 	init() {
-		sin = sockaddr_in(sin_len:__uint8_t(sizeof(sockaddr_in.self)), sin_family:sa_family_t(AF_INET), sin_port:in_port_t(0), sin_addr:in_addr(s_addr: 0), sin_zero:(Int8(0), Int8(0), Int8(0), Int8(0), Int8(0), Int8(0), Int8(0), Int8(0)))
+		sin = sockaddr_in(sin_len:__uint8_t(MemoryLayout<sockaddr_in>.size), sin_family:sa_family_t(AF_INET), sin_port:in_port_t(0), sin_addr:in_addr(s_addr: 0), sin_zero:(Int8(0), Int8(0), Int8(0), Int8(0), Int8(0), Int8(0), Int8(0), Int8(0)))
 	}
 
 	convenience init(otherAddress: SocketAddress) {
@@ -165,22 +167,24 @@ class SocketAddress {
 
 /// Convert a sockaddr structure to a string.
 func saToString(sa: UnsafePointer<sockaddr>) -> String? {
-	var hostBuffer = [CChar](count: Int(NI_MAXHOST), repeatedValue:0)
-	var portBuffer = [CChar](count: Int(NI_MAXSERV), repeatedValue:0)
+	var hostBuffer = [CChar](repeating:0, count: Int(NI_MAXHOST))
+	var portBuffer = [CChar](repeating:0, count: Int(NI_MAXSERV))
 
-	guard getnameinfo(sa, socklen_t(sa.memory.sa_len), &hostBuffer, socklen_t(hostBuffer.count), &portBuffer, socklen_t(portBuffer.count), NI_NUMERICHOST | NI_NUMERICSERV) == 0
+	guard getnameinfo(sa, socklen_t(sa.pointee.sa_len), &hostBuffer, socklen_t(hostBuffer.count), &portBuffer, socklen_t(portBuffer.count), NI_NUMERICHOST | NI_NUMERICSERV) == 0
 		else { return nil }
 
-	return String.fromCString(hostBuffer)
+	//return String.fromCString(hostBuffer)
+    return String.init(validatingUTF8: hostBuffer)
 }
 
 /// Write a blob of data to a stream starting from a particular offset.
-func writeData(data: NSData, toStream stream: NSOutputStream, startingAtOffset offset: Int) -> Int {
+func writeData(data: NSData, toStream stream: OutputStream, startingAtOffset offset: Int) -> Int {
 	var written = 0
 	var currentOffset = offset
 	while stream.hasSpaceAvailable && currentOffset < data.length {
-
-		let writeResult = stream.write(UnsafePointer<UInt8>(data.bytes) + currentOffset, maxLength: data.length - currentOffset)
+        
+        let writeResult = 0 //FIXME
+		//let writeResult = stream.write(UnsafePointer<UInt8>(data.bytes) + currentOffset, maxLength: data.length - currentOffset)
 		guard writeResult >= 0 else { return writeResult }
 
 		written += writeResult
@@ -196,8 +200,8 @@ public func createMessagePropertiesForConnection(connectionIdentifier: Int, comm
 	var properties = extraProperties
 
 	// Add in the standard properties common to all messages.
-	properties[TunnelMessageKey.Identifier.rawValue] = connectionIdentifier
-	properties[TunnelMessageKey.Command.rawValue] = commandType.rawValue
+	properties[TunnelMessageKey.Identifier.rawValue] = connectionIdentifier as AnyObject?
+	properties[TunnelMessageKey.Command.rawValue] = commandType.rawValue as AnyObject?
 	
 	return properties
 }
@@ -220,13 +224,14 @@ public enum SettingsKey: String {
 /// Get a value from a plist given a list of keys.
 public func getValueFromPlist(plist: [NSObject: AnyObject], keyArray: [SettingsKey]) -> AnyObject? {
 	var subPlist = plist
-	for (index, key) in keyArray.enumerate() {
+	for (index, key) in keyArray.enumerated() {
 		if index == keyArray.count - 1 {
-			return subPlist[key.rawValue]
-		}
-		else if let subSubPlist = subPlist[key.rawValue] as? [NSObject: AnyObject] {
-			subPlist = subSubPlist
-		}
+			//return subPlist[key.rawValue]
+            return nil //FIXME
+        }
+		//else if let subSubPlist = subPlist[key.rawValue] as? [NSObject: AnyObject] {
+		//	subPlist = subSubPlist
+		//}
 		else {
 			break
 		}
@@ -237,14 +242,18 @@ public func getValueFromPlist(plist: [NSObject: AnyObject], keyArray: [SettingsK
 
 /// Create a new range by incrementing the start of the given range by a given ammount.
 func rangeByMovingStartOfRange(range: Range<Int>, byCount: Int) -> Range<Int> {
-	return Range(start: range.startIndex + byCount, end: range.endIndex)
+    
+	//return Range(start: range.lowerBound + byCount, end: range.upperBound)
+    return Range(uncheckedBounds: (range.lowerBound, range.upperBound)) //FIXME
+    //return Range(uncheckedBounds: Bound(range.lowerBound)..<Bound(range.upperBound))
+    //0.0..<5.0
 }
 
 public func myLog(message: String) {
 	NSLog(message)
 }
 //extension String : CollectionType {}
-public func myLog<T>(object: T, _ file: String = __FILE__, _ function: String = __FUNCTION__, _ line: Int = __LINE__) {
+public func myLog<T>(object: T, _ file: String = #file, _ function: String = #function, _ line: Int = #line) {
     //let fn = file.split { $0 == "/" }.last
     let fn = file.characters.split { $0 == "/" }.map(String.init).last
     if let f = fn {

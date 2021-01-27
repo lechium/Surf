@@ -2,7 +2,7 @@
 #import "openssl/md5.h"
 #import "openssl/evp.h"
 #include "table.h"
-
+#include <string.h>
 
 static int random_compare(const void *_x, const void *_y) {
     uint32_t i = _i;

@@ -451,6 +451,7 @@
 		B07CCB2F1A8940E600A4F1E5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0730;
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Apple Inc.";
@@ -458,14 +459,17 @@
 					B01A16931A8A615F00BC9EFD = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = 745WQDK4L7;
+						LastSwiftMigration = 0820;
 					};
 					B07CCB361A8940E600A4F1E5 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = 745WQDK4L7;
+						LastSwiftMigration = 0820;
 					};
 					B07CCB6C1A89414500A4F1E5 = {
 						CreatedOnToolsVersion = 7.0;
 						DevelopmentTeam = 745WQDK4L7;
+						LastSwiftMigration = 0820;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
@@ -638,6 +642,7 @@
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -661,6 +666,7 @@
 				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -781,6 +787,7 @@
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "SimpleTunnel-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "/Users/github_swift/shadowsocks-iOS/libsodium-1.0.2/libsodium-ios/**";
 				VALID_ARCHS = "arm64 armv4t armv5 armv6 armv6m armv7 armv7em armv7f armv7m armv7s xscale x86_64";
 			};
@@ -811,6 +818,7 @@
 				PROVISIONING_PROFILE = "08b8f5d9-6573-4f90-812b-b41c0d56edff";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "SimpleTunnel-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "/Users/github_swift/shadowsocks-iOS/libsodium-1.0.2/libsodium-ios/**";
 				VALID_ARCHS = "arm64 armv4t armv5 armv6 armv6m armv7 armv7em armv7f armv7m armv7s xscale x86_64";
 			};
@@ -849,6 +857,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PacketTunnel-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "/Users/github_swift/shadowsocks-iOS/libsodium-1.0.2/libsodium-ios/**";
 			};
 			name = Debug;
@@ -885,6 +894,7 @@
 				PROVISIONING_PROFILE = "d004aa11-c86f-42ff-b59b-7bf6ddddd40f";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "PacketTunnel-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				USER_HEADER_SEARCH_PATHS = "/Users/github_swift/shadowsocks-iOS/libsodium-1.0.2/libsodium-ios/**";
 			};
 			name = Release;

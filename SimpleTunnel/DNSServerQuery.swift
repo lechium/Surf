@@ -9,11 +9,11 @@ import Foundation
 import CocoaAsyncSocket
 @objc class DNSServerQuery:NSObject ,GCDAsyncUdpSocketDelegate{
     var  queryDomains:[String] = []
-    var  address:NSData?
+    var  address:Data?
     var  packet:DNSPacket?
     var  socket:GCDAsyncUdpSocket?
     func sendQuery(){
-        let dispatchQueue = dispatch_queue_create("query", nil);
+        let dispatchQueue = DispatchQueue(label: "query", attributes: []);
         socket = GCDAsyncUdpSocket.init(delegate: self, delegateQueue: dispatchQueue)
         //socket?.sendData(packet?.rawData, toHost: , port: <#T##UInt16#>, withTimeout: <#T##NSTimeInterval#>, tag: <#T##Int#>)
     }
